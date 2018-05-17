@@ -1,0 +1,4 @@
+# Ignore OSX files
+.DS_Store
+# Ignore build folder
+/build/
