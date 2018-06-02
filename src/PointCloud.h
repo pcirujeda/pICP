@@ -12,13 +12,15 @@ class PointCloud
   public:
     typedef TCoordinate                CoordinateType;
     typedef cv::Mat_< CoordinateType > CoordinatesMatrixType;
+    typedef std::set< unsigned int >   PointIdentifierContainerType;
 
-    PointCloud() {};
-    ~PointCloud( void) ;
+    PointCloud();
+    ~PointCloud();
 
     void LoadOBJ( const std::string & objFilename );
     
     CoordinatesMatrixType GetCoordinatesMatrix();
+    CoordinatesMatrixType SelectCoordinates( const PointIdentifierContainerType & coordinateIdentifiers );
 
   private:
     CoordinatesMatrixType coordinatesMatrix;

@@ -5,7 +5,14 @@
 
 template< typename TCoordinate, unsigned int Dimension >
 PointCloud< TCoordinate, Dimension >
-::~PointCloud( void )
+::PointCloud()
+{
+  this->coordinatesMatrix.create( Dimension, 0 );
+}
+
+template< typename TCoordinate, unsigned int Dimension >
+PointCloud< TCoordinate, Dimension >
+::~PointCloud()
 {
 }
 
@@ -42,6 +49,23 @@ PointCloud< TCoordinate, Dimension >
 ::GetCoordinatesMatrix()
 {
   return this->coordinatesMatrix;
+}
+
+template< typename TCoordinate, unsigned int Dimension >
+typename PointCloud< TCoordinate, Dimension >::CoordinatesMatrixType
+PointCloud< TCoordinate, Dimension >
+::SelectCoordinates( const PointIdentifierContainerType & coordinateIdentifiers )
+{
+  CoordinatesMatrixType selectedCoordinatesMatrix( Dimension, coordinateIdentifiers.size() );
+
+  size_t scmIt = 0;
+  for( typename PointIdentifierContainerType::const_iterator ciIt = coordinateIdentifiers.begin(); ciIt != coordinateIdentifiers.end(); ciIt++ )
+  {
+    this->coordinatesMatrix.col( *ciIt ).copyTo( selectedCoordinatesMatrix.col( scmIt ) );
+    scmIt++;
+  }
+  
+  return selectedCoordinatesMatrix;
 }
 
 #endif
