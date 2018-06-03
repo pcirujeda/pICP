@@ -23,7 +23,7 @@ class PointCloud
     CoordinatesMatrixType SelectCoordinates( const PointIdentifierContainerType & coordinateIdentifiers );
 
   private:
-    CoordinatesMatrixType coordinatesMatrix;
+    CoordinatesMatrixType _coordinatesMatrix;
 };
 
 #include "PointCloud.hxx"

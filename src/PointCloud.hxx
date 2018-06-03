@@ -7,7 +7,7 @@ template< typename TCoordinate, unsigned int Dimension >
 PointCloud< TCoordinate, Dimension >
 ::PointCloud()
 {
-  this->coordinatesMatrix.create( Dimension, 0 );
+  this->_coordinatesMatrix.create( Dimension, 0 );
 }
 
 template< typename TCoordinate, unsigned int Dimension >
@@ -33,12 +33,12 @@ PointCloud< TCoordinate, Dimension >
   }
   
   // Populate coordinates matrix
-  this->coordinatesMatrix.create( Dimension, objAttributes.vertices.size()/3 );
+  this->_coordinatesMatrix.create( Dimension, objAttributes.vertices.size()/3 );
   for( size_t vIt = 0; vIt < objAttributes.vertices.size()/3; vIt++ )
   {
     for( size_t dimIt = 0; dimIt < Dimension; dimIt++ )
     {
-      this->coordinatesMatrix( dimIt, vIt ) = static_cast< TCoordinate >( objAttributes.vertices[ 3*vIt + dimIt ] );
+      this->_coordinatesMatrix( dimIt, vIt ) = static_cast< TCoordinate >( objAttributes.vertices[ 3*vIt + dimIt ] );
     }
   }
 }
@@ -48,7 +48,7 @@ typename PointCloud< TCoordinate, Dimension >::CoordinatesMatrixType
 PointCloud< TCoordinate, Dimension >
 ::GetCoordinatesMatrix()
 {
-  return this->coordinatesMatrix;
+  return this->_coordinatesMatrix;
 }
 
 template< typename TCoordinate, unsigned int Dimension >
@@ -61,7 +61,7 @@ PointCloud< TCoordinate, Dimension >
   size_t scmIt = 0;
   for( typename PointIdentifierContainerType::const_iterator ciIt = coordinateIdentifiers.begin(); ciIt != coordinateIdentifiers.end(); ciIt++ )
   {
-    this->coordinatesMatrix.col( *ciIt ).copyTo( selectedCoordinatesMatrix.col( scmIt ) );
+    this->_coordinatesMatrix.col( *ciIt ).copyTo( selectedCoordinatesMatrix.col( scmIt ) );
     scmIt++;
   }
   
