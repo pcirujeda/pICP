@@ -90,8 +90,16 @@ int main( int argc, char *argv[] )
 
   // Read source and target point clouds
   PointCloudType sourcePointCloud, targetPointCloud;
-  sourcePointCloud.LoadOBJ( sourceObjFileName );
-  targetPointCloud.LoadOBJ( targetObjFileName );
+  try
+  {
+    sourcePointCloud.LoadOBJ( sourceObjFileName );
+    targetPointCloud.LoadOBJ( targetObjFileName );
+  }
+  catch( std::exception & e )
+  {
+    std::cout << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }   
 
   // Create an instance of the ICP algorithm
   ICPType icpAlgorithm;
@@ -111,6 +119,23 @@ int main( int argc, char *argv[] )
     std::cout << e.what() << std::endl;
     return EXIT_FAILURE;
   }
+
+  // Transform source mesh
+  PointCloudCoordinatesMatrixType transformedSourceCoordinates = icpAlgorithm.GetRotationMatrix() * sourcePointCloud.GetCoordinatesMatrix() +
+                                                                 cv::repeat( icpAlgorithm.GetTranslationVector(), 1, sourcePointCloud.GetCoordinatesMatrix().cols );
+
+  sourcePointCloud.UpdateCoordinatesMatrix( transformedSourceCoordinates );                                                               
+
+  // Store transformed OBJ 
+  try
+  {
+    sourcePointCloud.WriteOBJ( transformedObjFileName );
+  }
+  catch( std::exception & e )
+  {
+    std::cout << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }                                                             
 
   return EXIT_SUCCESS;
 }
