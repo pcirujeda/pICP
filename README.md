@@ -5,21 +5,21 @@ This repo provides a clean and fast implementation of the ICP method by [Besl an
 ### The problem
 Given two point sets:
 
-![](https://latex.codecogs.com/gif.download?Source%20%3D%20%5Cleft%20%5C%7B%20source_1%2C%20...%2C%20source_N%20%5Cright%20%5C%7D)
-![](https://latex.codecogs.com/gif.download?Target%20%3D%20%5Cleft%20%5C%7B%20target_1%2C%20...%2C%20target_N%20%5Cright%20%5C%7D)
+![](samples/readme_eq1.gif)
+![](samples/readme_eq2.gif)
 
 find a rotation R and translation T that minimizes the error:
-![](https://latex.codecogs.com/gif.download?E%28R%2C%20t%29%20%3D%20%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bi%3D1%7D%5E%7BN%7D%5Cleft%20%5C%7C%20target_i%20-%20R%20%5Ccdot%20source_i%20-%20t%20%5Cright%20%5C%7C%5E2)
+![](samples/readme_eq3.gif)
 
 ### SVD based transform estimation
 Given a matrix W made by a set of correspondent N points, centered to its mean
-![](https://latex.codecogs.com/gif.download?W%20%3D%20%5Csum_%7Bi%3D1%7D%5E%7BN%7D%20%28target_i%20-%20%5Cmu_%7BTarget%7D%29%20%5Ccdot%20%28source_i%20-%20%5Cmu_%7BSource%7D%29)
+![](samples/readme_eq4.gif)
 
 obtain the Singular Value Decomposition of W = U * S * Vt.
 
 Theorem without proof says that if rank( W ) = 3, the optimal solution of E( R, t ) is unique and given by:
-![](https://latex.codecogs.com/gif.download?R%20%3D%20U%20V%5ET)
-![](https://latex.codecogs.com/gif.download?t%20%3D%20%5Cmu_%7B%20Target%20%7D%20-%20R%20%5Ccdot%20%5Cmu_%7BSource%7D)
+![](samples/readme_eq5.gif)
+![](samples/readme_eq6.gif)
 
 This process can be run iteratively, selecting correspondent points by different criteria (neighbourhood, random search...), until convergence.
 
