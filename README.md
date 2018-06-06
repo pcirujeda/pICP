@@ -6,19 +6,24 @@ This repo provides a clean and fast implementation of the ICP method by [Besl an
 Given two point sets:
 
 ![](samples/readme_eq1.gif)
+
 ![](samples/readme_eq2.gif)
 
 find a rotation R and translation T that minimizes the error:
+
 ![](samples/readme_eq3.gif)
 
 ### SVD based transform estimation
 Given a matrix W made by a set of correspondent N points, centered to its mean
+
 ![](samples/readme_eq4.gif)
 
 obtain the Singular Value Decomposition of W = U * S * Vt.
 
 Theorem without proof says that if rank( W ) = 3, the optimal solution of E( R, t ) is unique and given by:
+
 ![](samples/readme_eq5.gif)
+
 ![](samples/readme_eq6.gif)
 
 This process can be run iteratively, selecting correspondent points by different criteria (neighbourhood, random search...), until convergence.
