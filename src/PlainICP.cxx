@@ -1,7 +1,7 @@
 #include "boost/program_options.hpp"
 
-#include "PointCloud.h"
-#include "ICP.h"
+#include "pICP/PointCloud.h"
+#include "pICP/ICP.h"
 
 #include <exception>
 #include <iostream>

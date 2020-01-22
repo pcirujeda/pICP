@@ -1,7 +1,6 @@
-#ifndef __ICP_hxx
-#define __ICP_hxx
+#pragma once
 
-#include "ICP.h"
+#include "pICP/ICP.h"
 
 template< typename TCoordinate, unsigned int Dimension >
 IterativeClosestPoint< TCoordinate, Dimension >
@@ -282,5 +281,3 @@ IterativeClosestPoint< TCoordinate, Dimension >
     throw std::runtime_error( "Target coordinates matrix not set" );
   }
 }
-
-#endif

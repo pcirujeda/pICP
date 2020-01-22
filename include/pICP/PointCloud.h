@@ -1,5 +1,4 @@
-#ifndef __PointCloud_h
-#define __PointCloud_h
+#pragma once
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "external/tiny_obj_loader.h"
@@ -38,6 +37,4 @@ class PointCloud
     std::vector< tinyobj::material_t > _materials;
 };
 
-#include "PointCloud.hxx"
-
-#endif
+#include "pICP/PointCloud.hxx"

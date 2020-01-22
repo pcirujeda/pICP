@@ -1,5 +1,4 @@
-#ifndef __ICP_h
-#define __ICP_h
+#pragma once
 
 #include "opencv2/opencv.hpp"
 
@@ -64,5 +63,4 @@ class IterativeClosestPoint
 
 };
 
-#include "ICP.hxx"
-#endif
+#include "pICP/ICP.hxx"

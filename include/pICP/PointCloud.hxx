@@ -1,7 +1,6 @@
-#ifndef __PointCloud_hxx
-#define __PointCloud_hxx
+#pragma once
 
-#include "PointCloud.h"
+#include "pICP/PointCloud.h"
 
 template< typename TCoordinate, unsigned int Dimension >
 PointCloud< TCoordinate, Dimension >
@@ -96,5 +95,3 @@ PointCloud< TCoordinate, Dimension >
     }
   }
 }
-
-#endif
