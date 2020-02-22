@@ -4,20 +4,20 @@
 #include "external/tiny_obj_loader.h"
 #include "external/obj_writer.h"
 
-#include <opencv2/opencv.hpp>
+#include <Eigen/Core>
 
+#include <iostream>
 #include <stdexcept>
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension = 3 >
 class PointCloud
 {
   public:
-    typedef TCoordinate                CoordinateType;
-    typedef cv::Mat_< CoordinateType > CoordinatesMatrixType;
-    typedef std::set< unsigned int >   PointIdentifierContainerType;
+    typedef Eigen::Matrix< TCoordinate, TDimension, Eigen::Dynamic > CoordinatesMatrixType;
+    typedef std::set< unsigned int >                                 PointIdentifierContainerType;
 
-    PointCloud();
-    ~PointCloud();
+    PointCloud() = default;
+    ~PointCloud() = default;
 
     void LoadOBJ( const std::string & objFilename );
     void WriteOBJ( const std::string & objFilename );

@@ -121,8 +121,9 @@ int main( int argc, char *argv[] )
   }
 
   // Transform source mesh
-  PointCloudCoordinatesMatrixType transformedSourceCoordinates = icpAlgorithm.GetRotationMatrix() * sourcePointCloud.GetCoordinatesMatrix() +
-                                                                 cv::repeat( icpAlgorithm.GetTranslationVector(), 1, sourcePointCloud.GetCoordinatesMatrix().cols );
+  PointCloudCoordinatesMatrixType transformedSourceCoordinates =
+    (icpAlgorithm.GetRotationMatrix() * sourcePointCloud.GetCoordinatesMatrix() ).colwise() +
+    icpAlgorithm.GetTranslationVector();
 
   sourcePointCloud.UpdateCoordinatesMatrix( transformedSourceCoordinates );                                                               
 

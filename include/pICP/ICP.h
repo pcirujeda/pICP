@@ -1,24 +1,30 @@
 #pragma once
 
-#include "opencv2/opencv.hpp"
-
 #include <algorithm>
+#include <functional>
 #include <random>
 #include <stdexcept>
 
-template< typename TCoordinate, unsigned int Dimension >
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/SVD>
+
+#include <external/nanoflann.hpp>
+
+template< typename TCoordinate, unsigned int TDimension = 3 >
 class IterativeClosestPoint
 {
   public:
-    typedef TCoordinate                CoordinateType;
-    typedef cv::Mat_< CoordinateType > CoordinatesMatrixType;
+    typedef Eigen::Matrix< TCoordinate, TDimension, Eigen::Dynamic > CoordinatesMatrixType;
+    typedef Eigen::Matrix< TCoordinate, TDimension, TDimension >     RotationMatrixType;
+    typedef Eigen::Matrix< TCoordinate, TDimension, 1 >              TranslationVectorType;
 
     IterativeClosestPoint();
-    ~IterativeClosestPoint();
+    ~IterativeClosestPoint() = default;
 
     void SetIterations( const unsigned int iterations );
-    void SetSamplingRatio( const CoordinateType samplingRatio );
-    void SetTolerance( const CoordinateType tolerance );
+    void SetSamplingRatio( const double samplingRatio );
+    void SetTolerance( const double tolerance );
     void SetVerbose( const bool verbose );
 
     void SetSourceCoordinatesMatrix( const CoordinatesMatrixType & source );
@@ -27,17 +33,19 @@ class IterativeClosestPoint
     // Main method
     void Align();
 
-    CoordinatesMatrixType GetRotationMatrix();
-    CoordinatesMatrixType GetTranslationVector();
+    RotationMatrixType GetRotationMatrix();
+    TranslationVectorType GetTranslationVector();
 
   private:
-    typedef cv::Mat_< int > IndicesVectorType;
+    typedef nanoflann::KDTreeEigenMatrixAdaptor<
+        Eigen::Matrix< TCoordinate, Eigen::Dynamic, TDimension >> KDTreeType;
+    typedef std::vector< unsigned int >                           IndicesVectorType;
 
     // Algorithm parameters
-    unsigned int   _iterations;    // Maximum estimation iterations
-    CoordinateType _samplingRatio; // Sampling ratio (0-1) for data sampling in transform estimation
-    CoordinateType _tolerance;     // Error tolerance, expressed in average squared error in coordinate units
-    bool           _verbose;       // Output current iteration error and transform estimations
+    unsigned int _iterations;    // Maximum estimation iterations
+    double       _samplingRatio; // Sampling ratio (0-1) for data sampling in transform estimation
+    double       _tolerance;     // Error tolerance, expressed in average squared error in coordinate units
+    bool         _verbose;       // Output current iteration error and transform estimations
 
     // Data variables
     CoordinatesMatrixType _sourceCoordinatesMatrix;
@@ -45,11 +53,11 @@ class IterativeClosestPoint
     CoordinatesMatrixType _targetCoordinatesMatrix;
 
     // Internal variables
-    cv::Ptr< cv::flann::Index > _KDTree;
-    std::mt19937                _randomGenerator;
-    std::vector< int >          _sourceCoordinateIds;
-    CoordinatesMatrixType       _rotationMatrix;
-    CoordinatesMatrixType       _translationVector;
+    std::shared_ptr< KDTreeType > _KDTree;
+    std::mt19937                  _randomGenerator;
+    IndicesVectorType             _sourceCoordinateIds;
+    RotationMatrixType            _rotationMatrix;
+    TranslationVectorType         _translationVector;
 
     void CheckValidDimensions( const CoordinatesMatrixType & coordinatesMatrix ) const;
     void CheckDataAvailable() const;
@@ -59,8 +67,7 @@ class IterativeClosestPoint
                                                    const IndicesVectorType & indices );
     void ComputeSourceToTargetCorrespondences( IndicesVectorType & sourceIds, IndicesVectorType & targetIds );
     void ComputeTransform( const CoordinatesMatrixType & source, const CoordinatesMatrixType & target,
-                           CoordinatesMatrixType & rotationMatrix, CoordinatesMatrixType & translationVector );
-
+                           RotationMatrixType & rotationMatrix, TranslationVectorType & translationVector );
 };
 
 #include "pICP/ICP.hxx"

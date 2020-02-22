@@ -2,22 +2,9 @@
 
 #include "pICP/PointCloud.h"
 
-template< typename TCoordinate, unsigned int Dimension >
-PointCloud< TCoordinate, Dimension >
-::PointCloud()
-{
-  this->_coordinatesMatrix.create( Dimension, 0 );
-}
-
-template< typename TCoordinate, unsigned int Dimension >
-PointCloud< TCoordinate, Dimension >
-::~PointCloud()
-{
-}
-
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, Dimension >
+PointCloud< TCoordinate, TDimension >
 ::LoadOBJ( const std::string & objFilename )
 {
   // Parse using TinyObj
@@ -29,24 +16,24 @@ PointCloud< TCoordinate, Dimension >
 
   if( !error.empty() )
   {
-    // Even if the read was successful, a minor error could have been happened
+    // Even if the read was successful, a minor error could have happened
     std::cerr << error << std::endl;
   }
   
   // Populate coordinates matrix
-  this->_coordinatesMatrix.create( Dimension, _objAttributes.vertices.size()/3 );
-  for( size_t vIt = 0; vIt < _objAttributes.vertices.size()/3; vIt++ )
+  this->_coordinatesMatrix.resize( TDimension, _objAttributes.vertices.size()/TDimension );
+  for( size_t vIt = 0; vIt < _objAttributes.vertices.size()/TDimension; vIt++ )
   {
-    for( size_t dimIt = 0; dimIt < Dimension; dimIt++ )
+    for( size_t dimIt = 0; dimIt < TDimension; dimIt++ )
     {
-      this->_coordinatesMatrix( dimIt, vIt ) = static_cast< TCoordinate >( _objAttributes.vertices[ 3*vIt + dimIt ] );
+      this->_coordinatesMatrix( dimIt, vIt ) = static_cast< TCoordinate >( _objAttributes.vertices[ TDimension*vIt + dimIt ] );
     }
   }
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, Dimension >
+PointCloud< TCoordinate, TDimension >
 ::WriteOBJ( const std::string & objFilename )
 {
   if( !WriteObj( objFilename.c_str(), _objAttributes, _shapes, _materials ) )
@@ -55,43 +42,42 @@ PointCloud< TCoordinate, Dimension >
   }
 }
 
-template< typename TCoordinate, unsigned int Dimension >
-typename PointCloud< TCoordinate, Dimension >::CoordinatesMatrixType
-PointCloud< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+typename PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
+PointCloud< TCoordinate, TDimension >
 ::GetCoordinatesMatrix()
 {
   return this->_coordinatesMatrix;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
-typename PointCloud< TCoordinate, Dimension >::CoordinatesMatrixType
-PointCloud< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+typename PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
+PointCloud< TCoordinate, TDimension >
 ::SelectCoordinates( const PointIdentifierContainerType & coordinateIdentifiers )
 {
-  CoordinatesMatrixType selectedCoordinatesMatrix( Dimension, coordinateIdentifiers.size() );
+  CoordinatesMatrixType selectedCoordinatesMatrix( TDimension, coordinateIdentifiers.size() );
 
   size_t scmIt = 0;
-  for( typename PointIdentifierContainerType::const_iterator ciIt = coordinateIdentifiers.begin(); ciIt != coordinateIdentifiers.end(); ciIt++ )
+  for( const auto ciIt: coordinateIdentifiers )
   {
-    this->_coordinatesMatrix.col( *ciIt ).copyTo( selectedCoordinatesMatrix.col( scmIt ) );
-    scmIt++;
+    selectedCoordinatesMatrix.col( scmIt++ ) = this->_coordinatesMatrix.col( ciIt );
   }
   
   return selectedCoordinatesMatrix;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, Dimension >
+PointCloud< TCoordinate, TDimension >
 ::UpdateCoordinatesMatrix( const CoordinatesMatrixType & coordinates )
 {
-  this->_coordinatesMatrix = coordinates.clone();
+  this->_coordinatesMatrix = coordinates;
 
-  for( size_t vIt = 0; vIt < this->_coordinatesMatrix.cols; vIt++ )
+  for( size_t vIt = 0; vIt < this->_coordinatesMatrix.cols(); vIt++ )
   {
-    for( size_t dimIt = 0; dimIt < Dimension; dimIt++ )
+    for( size_t dimIt = 0; dimIt < TDimension; dimIt++ )
     {
-      _objAttributes.vertices[ 3*vIt + dimIt ] = static_cast< TCoordinate >( this->_coordinatesMatrix( dimIt, vIt ) );
+      _objAttributes.vertices[ TDimension*vIt + dimIt ] = static_cast< TCoordinate >( this->_coordinatesMatrix( dimIt, vIt ) );
     }
   }
 }

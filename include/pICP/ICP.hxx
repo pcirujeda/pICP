@@ -2,8 +2,8 @@
 
 #include "pICP/ICP.h"
 
-template< typename TCoordinate, unsigned int Dimension >
-IterativeClosestPoint< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::IterativeClosestPoint():
   _iterations( 300 ),
   _samplingRatio( 0.25 ),
@@ -11,71 +11,64 @@ IterativeClosestPoint< TCoordinate, Dimension >
   _verbose( false )
 {}
 
-template< typename TCoordinate, unsigned int Dimension >
-IterativeClosestPoint< TCoordinate, Dimension >
-::~IterativeClosestPoint()
-{
-  this->_KDTree.release();
-}
-
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::SetIterations( const unsigned int iterations )
 {
   this->_iterations = iterations;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
-::SetSamplingRatio( const CoordinateType samplingRatio )
+IterativeClosestPoint< TCoordinate, TDimension >
+::SetSamplingRatio( const double samplingRatio )
 {
   this->_samplingRatio = samplingRatio;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
-::SetTolerance( const CoordinateType tolerance )
+IterativeClosestPoint< TCoordinate, TDimension >
+::SetTolerance( const double tolerance )
 {
   this->_tolerance = tolerance;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::SetVerbose( const bool verbose )
 {
   this->_verbose = verbose;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::SetSourceCoordinatesMatrix( const CoordinatesMatrixType & source )
 {
   this->CheckValidDimensions( source );
 
-  this->_sourceCoordinatesMatrix = source.clone();
+  this->_sourceCoordinatesMatrix = source;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::SetTargetCoordinatesMatrix( const CoordinatesMatrixType & target )
 {
   this->CheckValidDimensions( target );
 
-  this->_targetCoordinatesMatrix = target.clone();
+  this->_targetCoordinatesMatrix = target;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
-typename IterativeClosestPoint< TCoordinate, Dimension >::CoordinatesMatrixType
-IterativeClosestPoint< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+typename IterativeClosestPoint< TCoordinate, TDimension >::RotationMatrixType
+IterativeClosestPoint< TCoordinate, TDimension >
 ::GetRotationMatrix()
 {
-  if( this->_rotationMatrix.empty() )
+  if( this->_rotationMatrix.size() == 0 )
   {
     throw std::runtime_error( "Transform not computed yet" );
   }
@@ -83,12 +76,12 @@ IterativeClosestPoint< TCoordinate, Dimension >
   return this->_rotationMatrix;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
-typename IterativeClosestPoint< TCoordinate, Dimension >::CoordinatesMatrixType
-IterativeClosestPoint< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+typename IterativeClosestPoint< TCoordinate, TDimension >::TranslationVectorType
+IterativeClosestPoint< TCoordinate, TDimension >
 ::GetTranslationVector()
 {
-  if( this->_translationVector.empty() )
+  if( this->_translationVector.size() == 0 )
   {
     throw std::runtime_error( "Transform not computed yet" );
   }
@@ -96,29 +89,29 @@ IterativeClosestPoint< TCoordinate, Dimension >
   return this->_translationVector;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::Align()
 {
   this->CheckDataAvailable();
 
-  // Initialize transform
-  this->_rotationMatrix = cv::Mat::eye( Dimension, Dimension, CV_32F );
-  this->_translationVector = cv::Mat::zeros( Dimension, 1, CV_32F );
+  // Initialize transform components
+  this->_rotationMatrix = RotationMatrixType::Identity();
+  this->_translationVector = TranslationVectorType::Zero();
 
   // Initialize a mutable copy of source coordinates matrix
-  this->_mutableSourceCoordinatesMatrix = this->_sourceCoordinatesMatrix.clone();
+  this->_mutableSourceCoordinatesMatrix = this->_sourceCoordinatesMatrix;
 
   // Create target coordinates KDTree representation
-  CoordinatesMatrixType transposedTargetCoordinates;
-  cv::transpose( this->_targetCoordinatesMatrix, transposedTargetCoordinates );
-  this->_KDTree.reset( new cv::flann::Index( transposedTargetCoordinates, cv::flann::LinearIndexParams() ) );
+  const Eigen::Matrix< TCoordinate, Eigen::Dynamic, TDimension > kdtreeCoordinates = this->_targetCoordinatesMatrix.transpose();
+  this->_KDTree.reset( new KDTreeType( TDimension, std::cref( kdtreeCoordinates )));
+  this->_KDTree->index->buildIndex(); 
 
   // Prepare random sampling assets
   std::random_device rd;
   this->_randomGenerator = std::mt19937( rd() );
-  this->_sourceCoordinateIds = std::vector< int >( this->_sourceCoordinatesMatrix.cols );
+  this->_sourceCoordinateIds = IndicesVectorType( this->_sourceCoordinatesMatrix.cols() );
   std::iota( this->_sourceCoordinateIds.begin(), this->_sourceCoordinateIds.end(), 0 );
 
   // Iterate ICP algorithm until error convergence or maximum iterations reached
@@ -130,20 +123,21 @@ IterativeClosestPoint< TCoordinate, Dimension >
     this->ComputeSourceToTargetCorrespondences( mutableSourceIds, targetIds );
 
     // Compute current transform between candidate correspondences
-    CoordinatesMatrixType currentRotationMatrix, currentTranslationVector;
+    RotationMatrixType currentRotationMatrix;
+    TranslationVectorType currentTranslationVector;
     this->ComputeTransform( this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, mutableSourceIds ),
                             this->SampleCoordinatesMatrix( this->_targetCoordinatesMatrix, targetIds ),
                             currentRotationMatrix, currentTranslationVector );
 
     // Transform current source coordinates
-    this->_mutableSourceCoordinatesMatrix = currentRotationMatrix * this->_mutableSourceCoordinatesMatrix +
-                                            cv::repeat( currentTranslationVector, 1, this->_mutableSourceCoordinatesMatrix.cols );
+    this->_mutableSourceCoordinatesMatrix = ( currentRotationMatrix * this->_mutableSourceCoordinatesMatrix ).colwise() +
+                                            currentTranslationVector;
 
     // Evaluate error
     CoordinatesMatrixType currentCoordinateDifferences = this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, mutableSourceIds ) -
                                                          this->SampleCoordinatesMatrix( this->_targetCoordinatesMatrix, targetIds );
 
-    double currentError = std::sqrt( cv::sum( currentCoordinateDifferences.mul( currentCoordinateDifferences ) )[0] / currentCoordinateDifferences.cols );
+    double currentError = currentCoordinateDifferences.squaredNorm();
 
     // Check error tolerance criteria
     if( currentError < this->_tolerance )
@@ -155,7 +149,7 @@ IterativeClosestPoint< TCoordinate, Dimension >
     {
       std::cout << "It: " << currentIteration << ", e: " << currentError << std::endl;
       std::cout << "Current R:" << std::endl << currentRotationMatrix << std::endl;
-      std::cout << "Current t: " << std::endl << currentTranslationVector << std::endl;
+      std::cout << "Current t: " << std::endl << currentTranslationVector.transpose() << std::endl;
       std::cout << std::endl;
     }
 
@@ -172,111 +166,108 @@ IterativeClosestPoint< TCoordinate, Dimension >
   if( this->_verbose )
   {
     std::cout << "Estimated R: " << std::endl << this->_rotationMatrix << std::endl;
-    std::cout << "Estimated t: " << std::endl << this->_translationVector << std::endl;
+    std::cout << "Estimated t: " << std::endl << this->_translationVector.transpose() << std::endl;
   }
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::ComputeSourceToTargetCorrespondences( IndicesVectorType & sourceIds, IndicesVectorType & targetIds )
 {
   // Sample random points in current deformed source, avoiding repeated ids
-  sourceIds.create( 1, this->_sourceCoordinateIds.size() * this->_samplingRatio );
+  size_t samplingSize = this->_sourceCoordinateIds.size() * this->_samplingRatio;
+
   std::shuffle( this->_sourceCoordinateIds.begin(), this->_sourceCoordinateIds.end(), this->_randomGenerator );
-  for( unsigned int qIt = 0; qIt < this->_sourceCoordinateIds.size() * this->_samplingRatio; qIt++ )
-  {
-    sourceIds( 0, qIt ) = this->_sourceCoordinateIds[ qIt ];
-  }
-  CoordinatesMatrixType sampledSourceCoordinatesQueryTransposed;
-  cv::transpose( this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, sourceIds ), sampledSourceCoordinatesQueryTransposed );
+  sourceIds = IndicesVectorType( this->_sourceCoordinateIds.begin(), this->_sourceCoordinateIds.begin() + samplingSize );
+
+  CoordinatesMatrixType sampledSourceCoordinatesQuery = this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, sourceIds );
 
   // Retrieve closest target points
-  IndicesVectorType closestTargetPointIds;
-  CoordinatesMatrixType closestTargetPointDistances;
-  this->_KDTree->knnSearch( sampledSourceCoordinatesQueryTransposed, closestTargetPointIds, closestTargetPointDistances, 1 );
-  cv::transpose( closestTargetPointIds, targetIds );
+  size_t knnQueryPts = 1;
+  std::vector<typename KDTreeType::IndexType> closestTargetId( knnQueryPts );
+  std::vector<TCoordinate > closestTargetDist2( knnQueryPts );
+
+  targetIds.resize( samplingSize );
+  for(size_t spIt = 0; spIt < sampledSourceCoordinatesQuery.cols(); spIt++)
+  {
+    std::vector<TCoordinate> querySourceCoord = { sampledSourceCoordinatesQuery.col(spIt)(0),
+                                                  sampledSourceCoordinatesQuery.col(spIt)(1),
+                                                  sampledSourceCoordinatesQuery.col(spIt)(2) };
+    
+    this->_KDTree->index->knnSearch( &querySourceCoord[0], knnQueryPts, &closestTargetId[0], &closestTargetDist2[0] );
+
+    targetIds[spIt] = closestTargetId[0];
+  }
 }
 
-template< typename TCoordinate, unsigned int Dimension >
-typename IterativeClosestPoint< TCoordinate, Dimension >::CoordinatesMatrixType
-IterativeClosestPoint< TCoordinate, Dimension >
+template< typename TCoordinate, unsigned int TDimension >
+typename IterativeClosestPoint< TCoordinate, TDimension >::CoordinatesMatrixType
+IterativeClosestPoint< TCoordinate, TDimension >
 ::SampleCoordinatesMatrix( const CoordinatesMatrixType & coordinatesMatrix, const IndicesVectorType & indices )
 {
-  CoordinatesMatrixType sampledCoordinatesMatrix( Dimension, indices.cols );
-  for( size_t iIt = 0; iIt < indices.cols; iIt++ )
-  {
-    for( unsigned int dim = 0; dim < Dimension; ++dim )
-    {
-      sampledCoordinatesMatrix( dim, iIt ) = coordinatesMatrix( dim, indices( 0, iIt ) );
-    }
-  }
+  CoordinatesMatrixType sampledCoordinatesMatrix( TDimension, indices.size() );
 
+  size_t sIt = 0;
+  for( const auto iIt: indices )
+  {
+    sampledCoordinatesMatrix.col( sIt++ ) = coordinatesMatrix.col( iIt );
+  }
+  
   return sampledCoordinatesMatrix;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::ComputeTransform( const CoordinatesMatrixType & source, const CoordinatesMatrixType & target,
-                    CoordinatesMatrixType & rotationMatrix, CoordinatesMatrixType & translationVector )
+                    RotationMatrixType & rotationMatrix, TranslationVectorType & translationVector )
 {
-  CoordinatesMatrixType sourceCentroid, targetCentroid;
-  cv::reduce( source, sourceCentroid, 1, CV_REDUCE_AVG );
-  cv::reduce( target, targetCentroid, 1, CV_REDUCE_AVG );
+  Eigen::Matrix<TCoordinate, TDimension, 1> sourceCentroid = source.rowwise().mean();
+  Eigen::Matrix<TCoordinate, TDimension, 1> targetCentroid = target.rowwise().mean();
 
-  CoordinatesMatrixType centeredSourceCoordinatesMatrix = source - cv::repeat( sourceCentroid, 1, source.cols );
-  CoordinatesMatrixType centeredTargetCoordinatesMatrix = target - cv::repeat( targetCentroid, 1, target.cols );
+  CoordinatesMatrixType centeredSourceCoordinates = source.colwise() - sourceCentroid;
+  CoordinatesMatrixType centeredTargetCoordinates = target.colwise() - targetCentroid;
 
-  CoordinatesMatrixType centeredTargetCoordinatesMatrixTransposed;
-  cv::transpose( centeredTargetCoordinatesMatrix, centeredTargetCoordinatesMatrixTransposed );
+  // w = ( source - source_mean ) * ( target - target_mean )T
+  auto w = centeredSourceCoordinates * centeredTargetCoordinates.transpose();
 
-  // W = ( source - source_mean ) * ( target - target_mean )T
-  CoordinatesMatrixType W = centeredSourceCoordinatesMatrix * centeredTargetCoordinatesMatrixTransposed;
+  // w = u * singular_values * vt
+  Eigen::JacobiSVD< Eigen::MatrixXf > svd( w, Eigen::ComputeFullU | Eigen::ComputeFullV );
 
-  // W = U * singular_values * Vt
-  CoordinatesMatrixType S, U, Vt;
-  cv::SVD::compute( W, S, U, Vt, cv::SVD::FULL_UV );
-
-  // R = V * Ut
-  CoordinatesMatrixType Ut, V;
-  cv::transpose( U, Ut );
-  cv::transpose( Vt, V );
-  rotationMatrix = V * Ut;
-  if( cv::determinant( rotationMatrix ) < 0 )
+  // R = V * ut
+  rotationMatrix = svd.matrixV() * svd.matrixU().transpose();
+  if( rotationMatrix.determinant() < 0 )
   {
-    for( size_t r = 0; r < Dimension; r++ )
-    {
-      rotationMatrix( r, Dimension-1 ) = -( rotationMatrix( r, Dimension-1 ) );
-    }
+    rotationMatrix.col( TDimension-1 ) *= -1.;
   }
 
   // t = target_mean - R * source_mean
   translationVector = targetCentroid - rotationMatrix * sourceCentroid;
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::CheckValidDimensions( const CoordinatesMatrixType & coordinatesMatrix ) const
 {
-  if( ( coordinatesMatrix.rows != Dimension ) )
+  if( ( coordinatesMatrix.rows() != TDimension ) )
   {
-    throw std::runtime_error( "Incorrect coordinate dimensions" );
+    throw std::runtime_error( "Incorrect coordinate TDimensions" );
   }
 }
 
-template< typename TCoordinate, unsigned int Dimension >
+template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, Dimension >
+IterativeClosestPoint< TCoordinate, TDimension >
 ::CheckDataAvailable() const
 {
-  if( this->_sourceCoordinatesMatrix.empty() )
+  if( this->_sourceCoordinatesMatrix.size() == 0 )
   {
     throw std::runtime_error( "Source coordinates matrix not set" );
   }
 
-  if( this->_targetCoordinatesMatrix.empty() )
+  if( this->_targetCoordinatesMatrix.size() == 0 )
   {
     throw std::runtime_error( "Target coordinates matrix not set" );
   }
