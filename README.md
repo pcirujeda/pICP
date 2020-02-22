@@ -1,5 +1,5 @@
 # pICP
-This repo provides a clean and fast implementation of the ICP method by [Besl and McKay](https://ieeexplore.ieee.org/document/121791/) in C++ with minimal dependencies (in fact, only [OpenCV](https://opencv.org/) is strictly required for data matrix manipulation and SVD computation). The algorithm is one of the baseline methods on rigid alignment of point clouds, and this implementation attempts to provide an entry point for learning it with no practical hassles. At the same time, it works fast and robustly enough to be used out-of-the box on any of your projects.
+This project provides a clean and fast implementation of the ICP method by [Besl and McKay](https://ieeexplore.ieee.org/document/121791/) in C++ with minimal dependencies ([Eigen](http://eigen.tuxfamily.org) for matrix manipulation and SVD computation, and [Nanoflann](https://github.com/jlblancoc/nanoflann) for KDTree-based correspondences search). The algorithm is one of the baseline methods on rigid alignment of point clouds, and this implementation attempts to provide an entry point for learning it with no practical hassles. At the same time, it works fast and robustly enough to be used out-of-the box on any of your projects.
 
 ![](samples/alignment.png)
 
@@ -32,7 +32,7 @@ Theorem without proof says that if rank( W ) = 3, the optimal solution of E( R, 
 This process can be run iteratively, selecting correspondent points by different criteria (neighbourhood, random search...), until convergence.
 
 ## Dependencies
-Only OpenCV is required if you are just using the ICP class on your project.
+[Eigen](http://eigen.tuxfamily.org) is the only external dependency required on your system. [Nanoflann](https://github.com/jlblancoc/nanoflann) is included in the project.
 
 A real test executable is provided, allowing to register any desired pair of point clouds (only .obj format supported at the moment). The PointCloud class uses [TinyObjLoader](https://github.com/syoyo/tinyobjloader) (header included) for parsing OBJ files, and the PlainICP executable requires [Boost](https://www.boost.org/) for parsing external arguments.
 
