@@ -17,3 +17,6 @@ include_directories(
 
 add_executable( PlainICP src/PlainICP.cxx )
 target_link_libraries( PlainICP ${Boost_LIBRARIES} )
+
+enable_testing()
+add_subdirectory( test )
