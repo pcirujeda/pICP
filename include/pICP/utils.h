@@ -12,4 +12,11 @@ transformCoordinatesMatrix( const CoordinatesMatrixType& inputCoordinates,
     return ( rotation * inputCoordinates ).colwise() + translation;
 }
 
+template <typename CoordinatesMatrixType >
+typename CoordinatesMatrixType::Scalar
+coordinatesDifferenceNorm( const CoordinatesMatrixType& coordinatesSource, const CoordinatesMatrixType& coordinatesTarget )
+{
+    return ( coordinatesSource - coordinatesTarget ).squaredNorm();
+}
+
 }  // namespace pICP

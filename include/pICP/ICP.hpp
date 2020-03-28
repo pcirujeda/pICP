@@ -31,7 +31,7 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
 template< typename TCoordinate, unsigned int TDimension >
 void
 pICP::IterativeClosestPoint< TCoordinate, TDimension >
-::SetTolerance( const double tolerance )
+::SetTolerance( const TCoordinate tolerance )
 {
   this->_tolerance = tolerance;
 }
@@ -136,10 +136,8 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
                                                                         currentTranslationVector );
 
     // Evaluate error
-    CoordinatesMatrixType currentCoordinateDifferences = this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, mutableSourceIds ) -
-                                                         this->SampleCoordinatesMatrix( this->_targetCoordinatesMatrix, targetIds );
-
-    double currentError = currentCoordinateDifferences.squaredNorm();
+    TCoordinate currentError = coordinatesDifferenceNorm( this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, mutableSourceIds ), 
+                                                          this->SampleCoordinatesMatrix( this->_targetCoordinatesMatrix, targetIds ) );
 
     // Check error tolerance criteria
     if( currentError < this->_tolerance )

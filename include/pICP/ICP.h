@@ -27,7 +27,7 @@ class IterativeClosestPoint
 
     void SetIterations( const unsigned int iterations );
     void SetSamplingRatio( const double samplingRatio );
-    void SetTolerance( const double tolerance );
+    void SetTolerance( const TCoordinate tolerance );
     void SetVerbose( const bool verbose );
 
     void SetSourceCoordinatesMatrix( const CoordinatesMatrixType & source );
@@ -47,7 +47,7 @@ class IterativeClosestPoint
     // Algorithm parameters
     unsigned int _iterations;    // Maximum estimation iterations
     double       _samplingRatio; // Sampling ratio (0-1) for data sampling in transform estimation
-    double       _tolerance;     // Error tolerance, expressed in average squared error in coordinate units
+    TCoordinate  _tolerance;     // Error tolerance, expressed in average squared error in coordinate units
     bool         _verbose;       // Output current iteration error and transform estimations
 
     // Data variables
