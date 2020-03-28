@@ -2,6 +2,7 @@
 
 #include "pICP/PointCloud.h"
 #include "pICP/ICP.h"
+#include "pICP/utils.h"
 
 #include <exception>
 #include <iostream>
@@ -122,8 +123,9 @@ int main( int argc, char *argv[] )
 
   // Transform source mesh
   PointCloudCoordinatesMatrixType transformedSourceCoordinates =
-    (icpAlgorithm.GetRotationMatrix() * sourcePointCloud.GetCoordinatesMatrix() ).colwise() +
-    icpAlgorithm.GetTranslationVector();
+    pICP::transformCoordinatesMatrix( sourcePointCloud.GetCoordinatesMatrix(),
+                                      icpAlgorithm.GetRotationMatrix(),
+                                      icpAlgorithm.GetTranslationVector() );
 
   sourcePointCloud.UpdateCoordinatesMatrix( transformedSourceCoordinates );                                                               
 

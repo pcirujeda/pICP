@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pICP/ICP.h"
+#include "pICP/utils.h"
 
 template< typename TCoordinate, unsigned int TDimension >
 pICP::IterativeClosestPoint< TCoordinate, TDimension >
@@ -130,8 +131,9 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
                             currentRotationMatrix, currentTranslationVector );
 
     // Transform current source coordinates
-    this->_mutableSourceCoordinatesMatrix = ( currentRotationMatrix * this->_mutableSourceCoordinatesMatrix ).colwise() +
-                                            currentTranslationVector;
+    this->_mutableSourceCoordinatesMatrix = transformCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix,
+                                                                        currentRotationMatrix,
+                                                                        currentTranslationVector );
 
     // Evaluate error
     CoordinatesMatrixType currentCoordinateDifferences = this->SampleCoordinatesMatrix( this->_mutableSourceCoordinatesMatrix, mutableSourceIds ) -
