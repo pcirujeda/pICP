@@ -15,7 +15,7 @@ include_directories(
 	${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable( PlainICP src/PlainICP.cxx )
+add_executable( PlainICP src/PlainICP.cpp )
 target_link_libraries( PlainICP ${Boost_LIBRARIES} )
 
 enable_testing()

@@ -70,4 +70,4 @@ class IterativeClosestPoint
                            RotationMatrixType & rotationMatrix, TranslationVectorType & translationVector );
 };
 
-#include "pICP/ICP.hxx"
+#include "pICP/ICP.hpp"

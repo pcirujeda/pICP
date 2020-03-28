@@ -37,4 +37,4 @@ class PointCloud
     std::vector< tinyobj::material_t > _materials;
 };
 
-#include "pICP/PointCloud.hxx"
+#include "pICP/PointCloud.hpp"
