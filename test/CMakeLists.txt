@@ -39,6 +39,7 @@ include_directories(
 # Add test executable sources
 set( TEST_SOURCE_FILES
     main.cpp
+    utils.cpp
 )
 
 set( TEST_TARGET ${CMAKE_PROJECT_NAME}_test )

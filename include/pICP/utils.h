@@ -16,7 +16,7 @@ template <typename CoordinatesMatrixType >
 typename CoordinatesMatrixType::Scalar
 coordinatesDifferenceNorm( const CoordinatesMatrixType& coordinatesSource, const CoordinatesMatrixType& coordinatesTarget )
 {
-    return ( coordinatesSource - coordinatesTarget ).squaredNorm();
+    return ( coordinatesSource - coordinatesTarget ).norm();
 }
 
 }  // namespace pICP
