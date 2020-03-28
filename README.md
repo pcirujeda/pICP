@@ -54,5 +54,12 @@ Sample call with provided sample OBJ files:
 ./PlainICP  --source-obj-file ../samples/bunny_head.obj --target-obj-file ../samples/bunny.obj --transformed-obj-file ../samples/aligned_bunny_head.obj --tolerance 0.0005 --verbose 1
 ```
 
+## Testing
+Unit testing using [googletest](https://github.com/google/googletest) is provided (Google Test dependency is automatically installed and self-contained within the project). Run the following target in the build directory:
+
+```
+make build_and_test
+```
+
 ## License
 This software release is primarily [MIT](https://opensource.org/licenses/MIT) licensed. Some files contain third-party code under other licens
