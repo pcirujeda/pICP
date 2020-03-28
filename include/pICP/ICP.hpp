@@ -3,7 +3,7 @@
 #include "pICP/ICP.h"
 
 template< typename TCoordinate, unsigned int TDimension >
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::IterativeClosestPoint():
   _iterations( 300 ),
   _samplingRatio( 0.25 ),
@@ -13,7 +13,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetIterations( const unsigned int iterations )
 {
   this->_iterations = iterations;
@@ -21,7 +21,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetSamplingRatio( const double samplingRatio )
 {
   this->_samplingRatio = samplingRatio;
@@ -29,7 +29,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetTolerance( const double tolerance )
 {
   this->_tolerance = tolerance;
@@ -37,7 +37,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetVerbose( const bool verbose )
 {
   this->_verbose = verbose;
@@ -45,7 +45,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetSourceCoordinatesMatrix( const CoordinatesMatrixType & source )
 {
   this->CheckValidDimensions( source );
@@ -55,7 +55,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SetTargetCoordinatesMatrix( const CoordinatesMatrixType & target )
 {
   this->CheckValidDimensions( target );
@@ -64,8 +64,8 @@ IterativeClosestPoint< TCoordinate, TDimension >
 }
 
 template< typename TCoordinate, unsigned int TDimension >
-typename IterativeClosestPoint< TCoordinate, TDimension >::RotationMatrixType
-IterativeClosestPoint< TCoordinate, TDimension >
+typename pICP::IterativeClosestPoint< TCoordinate, TDimension >::RotationMatrixType
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::GetRotationMatrix()
 {
   if( this->_rotationMatrix.size() == 0 )
@@ -77,8 +77,8 @@ IterativeClosestPoint< TCoordinate, TDimension >
 }
 
 template< typename TCoordinate, unsigned int TDimension >
-typename IterativeClosestPoint< TCoordinate, TDimension >::TranslationVectorType
-IterativeClosestPoint< TCoordinate, TDimension >
+typename pICP::IterativeClosestPoint< TCoordinate, TDimension >::TranslationVectorType
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::GetTranslationVector()
 {
   if( this->_translationVector.size() == 0 )
@@ -91,7 +91,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::Align()
 {
   this->CheckDataAvailable();
@@ -172,7 +172,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::ComputeSourceToTargetCorrespondences( IndicesVectorType & sourceIds, IndicesVectorType & targetIds )
 {
   // Sample random points in current deformed source, avoiding repeated ids
@@ -202,8 +202,8 @@ IterativeClosestPoint< TCoordinate, TDimension >
 }
 
 template< typename TCoordinate, unsigned int TDimension >
-typename IterativeClosestPoint< TCoordinate, TDimension >::CoordinatesMatrixType
-IterativeClosestPoint< TCoordinate, TDimension >
+typename pICP::IterativeClosestPoint< TCoordinate, TDimension >::CoordinatesMatrixType
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::SampleCoordinatesMatrix( const CoordinatesMatrixType & coordinatesMatrix, const IndicesVectorType & indices )
 {
   CoordinatesMatrixType sampledCoordinatesMatrix( TDimension, indices.size() );
@@ -219,7 +219,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::ComputeTransform( const CoordinatesMatrixType & source, const CoordinatesMatrixType & target,
                     RotationMatrixType & rotationMatrix, TranslationVectorType & translationVector )
 {
@@ -248,7 +248,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::CheckValidDimensions( const CoordinatesMatrixType & coordinatesMatrix ) const
 {
   if( ( coordinatesMatrix.rows() != TDimension ) )
@@ -259,7 +259,7 @@ IterativeClosestPoint< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-IterativeClosestPoint< TCoordinate, TDimension >
+pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::CheckDataAvailable() const
 {
   if( this->_sourceCoordinatesMatrix.size() == 0 )

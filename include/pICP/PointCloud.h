@@ -9,6 +9,9 @@
 #include <iostream>
 #include <stdexcept>
 
+namespace pICP
+{
+
 template< typename TCoordinate, unsigned int TDimension = 3 >
 class PointCloud
 {
@@ -36,5 +39,7 @@ class PointCloud
     std::vector< tinyobj::shape_t >    _shapes;
     std::vector< tinyobj::material_t > _materials;
 };
+
+} // namespace pICP
 
 #include "pICP/PointCloud.hpp"

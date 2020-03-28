@@ -4,7 +4,7 @@
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, TDimension >
+pICP::PointCloud< TCoordinate, TDimension >
 ::LoadOBJ( const std::string & objFilename )
 {
   // Parse using TinyObj
@@ -33,7 +33,7 @@ PointCloud< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, TDimension >
+pICP::PointCloud< TCoordinate, TDimension >
 ::WriteOBJ( const std::string & objFilename )
 {
   if( !WriteObj( objFilename.c_str(), _objAttributes, _shapes, _materials ) )
@@ -43,16 +43,16 @@ PointCloud< TCoordinate, TDimension >
 }
 
 template< typename TCoordinate, unsigned int TDimension >
-typename PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
-PointCloud< TCoordinate, TDimension >
+typename pICP::PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
+pICP::PointCloud< TCoordinate, TDimension >
 ::GetCoordinatesMatrix()
 {
   return this->_coordinatesMatrix;
 }
 
 template< typename TCoordinate, unsigned int TDimension >
-typename PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
-PointCloud< TCoordinate, TDimension >
+typename pICP::PointCloud< TCoordinate, TDimension >::CoordinatesMatrixType
+pICP::PointCloud< TCoordinate, TDimension >
 ::SelectCoordinates( const PointIdentifierContainerType & coordinateIdentifiers )
 {
   CoordinatesMatrixType selectedCoordinatesMatrix( TDimension, coordinateIdentifiers.size() );
@@ -68,7 +68,7 @@ PointCloud< TCoordinate, TDimension >
 
 template< typename TCoordinate, unsigned int TDimension >
 void
-PointCloud< TCoordinate, TDimension >
+pICP::PointCloud< TCoordinate, TDimension >
 ::UpdateCoordinatesMatrix( const CoordinatesMatrixType & coordinates )
 {
   this->_coordinatesMatrix = coordinates;

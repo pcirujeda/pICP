@@ -11,6 +11,9 @@
 
 #include <external/nanoflann.hpp>
 
+namespace pICP
+{
+
 template< typename TCoordinate, unsigned int TDimension = 3 >
 class IterativeClosestPoint
 {
@@ -69,5 +72,7 @@ class IterativeClosestPoint
     void ComputeTransform( const CoordinatesMatrixType & source, const CoordinatesMatrixType & target,
                            RotationMatrixType & rotationMatrix, TranslationVectorType & translationVector );
 };
+
+} // namespace pICP
 
 #include "pICP/ICP.hpp"

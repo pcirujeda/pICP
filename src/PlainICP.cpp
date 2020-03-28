@@ -63,10 +63,10 @@ int parseInputArguments( int argc, char* argv[],
 
 int main( int argc, char *argv[] )
 {
-  typedef PointCloud< float, 3 >                PointCloudType;
-  typedef PointCloudType::CoordinatesMatrixType PointCloudCoordinatesMatrixType;
+  typedef pICP::PointCloud< float, 3 >            PointCloudType;
+  typedef PointCloudType::CoordinatesMatrixType   PointCloudCoordinatesMatrixType;
 
-  typedef IterativeClosestPoint< float, 3 > ICPType;
+  typedef pICP::IterativeClosestPoint< float, 3 > ICPType;
 
   // Parse the input arguments
   std::string sourceObjFileName;
