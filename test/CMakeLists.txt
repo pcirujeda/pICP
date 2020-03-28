@@ -5,7 +5,8 @@ find_package( Threads REQUIRED )
 # Download GoogleTest
 ExternalProject_Add(
     gtest
-    URL https://github.com/google/googletest/archive/master.zip
+    GIT_REPOSITORY git@github.com:google/googletest.git
+    GIT_TAG release-1.10.0
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     INSTALL_COMMAND ""
 )
@@ -40,14 +41,11 @@ set( TEST_SOURCE_FILES
     main.cpp
 )
 
-add_executable( testTarget ${TEST_SOURCE_FILES} )
+set( TEST_TARGET ${CMAKE_PROJECT_NAME}_test )
+add_executable( ${TEST_TARGET} ${TEST_SOURCE_FILES} )
+target_link_libraries( ${TEST_TARGET} libgtest libgmock )
+add_test( NAME ${TEST_TARGET} COMMAND ${TEST_TARGET} )
 
-target_link_libraries( testTarget
-    libgtest
-    libgmock
-)
-
-add_test(
-    NAME testTarget
-    COMMAND testTarget
-)
+# Add custom build and test target, dependant on registered test commands
+add_custom_target( build_and_test ${CMAKE_CTEST_COMMAND} -V )
+add_dependencies( build_and_test ${TEST_TARGET} )
