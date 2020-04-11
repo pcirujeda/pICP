@@ -61,7 +61,7 @@ TEST(utils, transform_3d)
 
     Eigen::Matrix< float, 3, 3 > rotation;
     rotation << 1.,                  0.,                   0.,               
-    			0., std::cos( M_PI/2. ), -std::sin( M_PI/2. ),
+                0., std::cos( M_PI/2. ), -std::sin( M_PI/2. ),
                 0.,  std::sin( M_PI/2.),  std::cos( M_PI/2. );
 
     Eigen::Matrix< float, 3, 1 > translation;
@@ -97,10 +97,10 @@ TEST(utils, coordinatesDifferenceNorm_inequality)
                    1., 2., 3., 4., 5.;
 
     Eigen::Matrix< float, 3, 5 > differentCoordinates = coordinates;
-    differentCoordinates( 1, 2 ) += 2.;
-    differentCoordinates( 3, 4 ) += 3.;
+    //differentCoordinates( 1, 3 ) += 2.;
+    differentCoordinates( 2, 4 ) += 3.;
 
-    EXPECT_EQ(pICP::coordinatesDifferenceNorm( coordinates, differentCoordinates ), 5. );
+    EXPECT_EQ(pICP::coordinatesDifferenceNorm( coordinates, differentCoordinates ), 3. );
 }
 
 }  // namespace

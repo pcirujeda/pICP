@@ -38,8 +38,10 @@ include_directories(
 
 # Add test executable sources
 set( TEST_SOURCE_FILES
-    main.cpp
-    utils.cpp
+    pICP/main.cpp
+    pICP/ICP.cpp
+    pICP/PointCloud.cpp
+    pICP/utils.cpp
 )
 
 set( TEST_TARGET ${CMAKE_PROJECT_NAME}_test )
