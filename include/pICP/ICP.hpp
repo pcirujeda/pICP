@@ -235,7 +235,7 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
   auto w = centeredSourceCoordinates * centeredTargetCoordinates.transpose();
 
   // w = u * singular_values * vt
-  Eigen::JacobiSVD< Eigen::MatrixXf > svd( w, Eigen::ComputeFullU | Eigen::ComputeFullV );
+  Eigen::JacobiSVD< Eigen::Matrix< TCoordinate, Eigen::Dynamic, Eigen::Dynamic >> svd( w, Eigen::ComputeFullU | Eigen::ComputeFullV );
 
   // R = V * ut
   rotationMatrix = svd.matrixV() * svd.matrixU().transpose();
