@@ -36,6 +36,11 @@ void
 pICP::PointCloud< TCoordinate, TDimension >
 ::WriteOBJ( const std::string & objFilename )
 {
+  if constexpr (TDimension != 3)
+  {
+    throw std::runtime_error( std::to_string(TDimension) + "D OBJ write unsupported. " );
+  }
+
   if( !WriteObj( objFilename.c_str(), _objAttributes, _shapes, _materials ) )
   {
     throw std::runtime_error( "Error writing OBJ file " + objFilename + ". " );
@@ -72,6 +77,8 @@ pICP::PointCloud< TCoordinate, TDimension >
 ::UpdateCoordinatesMatrix( const CoordinatesMatrixType & coordinates )
 {
   this->_coordinatesMatrix = coordinates;
+
+  _objAttributes.vertices.resize( TDimension * coordinates.cols() );
 
   for( size_t vIt = 0; vIt < this->_coordinatesMatrix.cols(); vIt++ )
   {
