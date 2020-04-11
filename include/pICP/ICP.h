@@ -14,7 +14,7 @@
 namespace pICP
 {
 
-template< typename TCoordinate, unsigned int TDimension = 3 >
+template< typename TCoordinate, unsigned int TDimension >
 class IterativeClosestPoint
 {
   public:

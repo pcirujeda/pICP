@@ -191,9 +191,11 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
   targetIds.resize( samplingSize );
   for(size_t spIt = 0; spIt < sampledSourceCoordinatesQuery.cols(); spIt++)
   {
-    std::vector<TCoordinate> querySourceCoord = { sampledSourceCoordinatesQuery.col(spIt)(0),
-                                                  sampledSourceCoordinatesQuery.col(spIt)(1),
-                                                  sampledSourceCoordinatesQuery.col(spIt)(2) };
+    std::vector<TCoordinate> querySourceCoord;
+    for(size_t dIt = 0; dIt < TDimension; dIt++)
+    {
+      querySourceCoord.push_back( sampledSourceCoordinatesQuery.col(spIt)(dIt) );
+    }
     
     this->_KDTree->index->knnSearch( &querySourceCoord[0], knnQueryPts, &closestTargetId[0], &closestTargetDist2[0] );
 
