@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 #include "pICP/ICP.h"
 #include "pICP/utils.h"
 
@@ -10,7 +12,10 @@ pICP::IterativeClosestPoint< TCoordinate, TDimension >
   _samplingRatio( 0.25 ),
   _tolerance( 0.3 ),
   _verbose( false )
-{}
+{
+  this->_rotationMatrix = RotationMatrixType::Constant( std::numeric_limits<TCoordinate>::quiet_NaN() );
+  this->_translationVector = TranslationVectorType::Constant( std::numeric_limits<TCoordinate>::quiet_NaN() );
+}
 
 template< typename TCoordinate, unsigned int TDimension >
 void
@@ -69,7 +74,7 @@ typename pICP::IterativeClosestPoint< TCoordinate, TDimension >::RotationMatrixT
 pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::GetRotationMatrix()
 {
-  if( this->_rotationMatrix.size() == 0 )
+  if( std::isnan( this->_rotationMatrix.norm() ))
   {
     throw std::runtime_error( "Transform not computed yet" );
   }
@@ -82,7 +87,7 @@ typename pICP::IterativeClosestPoint< TCoordinate, TDimension >::TranslationVect
 pICP::IterativeClosestPoint< TCoordinate, TDimension >
 ::GetTranslationVector()
 {
-  if( this->_translationVector.size() == 0 )
+  if( std::isnan( this->_translationVector.norm() ))
   {
     throw std::runtime_error( "Transform not computed yet" );
   }
