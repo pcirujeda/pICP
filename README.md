@@ -63,7 +63,30 @@ Sample call with provided sample OBJ files:
            --verbose 1
 ```
 
-If you want to integrate the ICP implementation into your project, just copy the headers into your source code.
+If you want to integrate the ICP implementation into your project, just copy the headers into your source code. See the basic example below:
+
+```
+#include "pICP/ICP.h"
+
+using ICP = pICP::IterativeClosestPoint< float, 3 >;
+
+ICP icp3D;
+icp3D.SetTolerance( 0.001 );
+
+ICP::CoordinatesMatrixType sourceCoordinates(3, /* your source cloud size */);
+ICP::CoordinatesMatrixType targetCoordinates(3, /* your target cloud size */);
+
+// Populate coordinate matrices with your cloud data */
+
+// Align
+icp3D.SetSourceCoordinatesMatrix( coordinates );
+icp3D.SetTargetCoordinatesMatrix( translatedCoordinates );
+icp3D.Align();
+
+// Retrieve resulting transform
+icp3D.GetRotationMatrix();
+icp3D.GetTranslationVector();
+```
 
 ## Testing
 Unit testing is provided, as a good practice and for code illustration purposes. Run the following target in the build directory:
