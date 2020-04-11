@@ -79,8 +79,8 @@ ICP::CoordinatesMatrixType targetCoordinates(3, /* your target cloud size */);
 // Populate coordinate matrices with your cloud data */
 
 // Align
-icp3D.SetSourceCoordinatesMatrix( coordinates );
-icp3D.SetTargetCoordinatesMatrix( translatedCoordinates );
+icp3D.SetSourceCoordinatesMatrix( sourceCoordinates );
+icp3D.SetTargetCoordinatesMatrix( targetCoordinates );
 icp3D.Align();
 
 // Retrieve resulting transform
